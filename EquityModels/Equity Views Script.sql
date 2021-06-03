@@ -92,6 +92,7 @@ SELECT s.StaffUSI
         ,s.FirstName
         ) AS StaffName
     ,s.BirthDate
+    ,s.SexType
     ,s.RaceType
     ,CASE 
         WHEN s.HispanicLatinoEthnicity = 1
@@ -105,9 +106,14 @@ SELECT s.StaffUSI
             THEN 'True'
         ELSE 'False'
         END AS HighlyQualifiedTeacher
+    ,HighestCompletedLevelOfEducation
     ,s.LoginId
 FROM analytics.StaffSectionDim s;
+
 GO
+
+
+
 
 
 
@@ -143,9 +149,7 @@ SELECT DISTINCT aaf.AssessmentKey
     ,sa.StudentSchoolKey
     ,CAST(sa.AdministrationDate AS DATE) AS AdministrationDate
     ,aaf.AssessedGradeLevel AS GradeLevel
-    ,aaf.AcademicSubject AS AcademicSubject
     ,sa.ReportingMethod AS ReportingMethod
-    ,aaf.Title AS AssessmentTitle
     ,sa.StudentScore AS Result
     ,sa.Namespace AS Namespace
     ,aaf.Version AS Version
