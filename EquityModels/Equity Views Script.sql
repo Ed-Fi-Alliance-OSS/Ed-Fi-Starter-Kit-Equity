@@ -5,15 +5,14 @@
 IF NOT EXISTS (
         SELECT schema_name
         FROM information_schema.schemata
-        WHERE schema_name = 'bi'
+        WHERE schema_name = 'BI'
         )
 BEGIN
-    EXEC sp_executesql N'CREATE SCHEMA [bi] AUTHORIZATION [dbo]'
+    EXEC sp_executesql N'CREATE SCHEMA [BI] AUTHORIZATION [dbo]'
 END
 GO
 
---View name [bi].[equity.<view name>]
-CREATE OR ALTER VIEW [bi].[equity.School]
+CREATE OR ALTER VIEW [BI].[equity.School]
 AS
 SELECT SchoolKey
     ,SchoolName
@@ -22,7 +21,7 @@ SELECT SchoolKey
 FROM analytics.SchoolDim;
 GO
 
-CREATE OR ALTER VIEW [bi].[equity.Section]
+CREATE OR ALTER VIEW [BI].[equity.Section]
 AS
 SELECT DISTINCT SchoolKey
     ,SectionKey
@@ -35,7 +34,7 @@ SELECT DISTINCT SchoolKey
 FROM analytics.SectionDim;
 GO
 
-CREATE OR ALTER VIEW [bi].[equity.Student]
+CREATE OR ALTER VIEW [BI].[equity.Student]
 AS
 SELECT StudentSchoolDim.GradeLevel AS [CurrentGradeLevel]
     ,StudentSchoolDim.SchoolKey AS [CurrentSchoolKey]
@@ -50,16 +49,15 @@ SELECT StudentSchoolDim.GradeLevel AS [CurrentGradeLevel]
         ,StudentSchoolDim.StudentFirstName
         ) as StudentName
     ,StudentSchoolDim.Sex AS SexType
-    ,StudentSchoolDim.StudentSchoolKey AS StudentUniqueId
-    ,StudentSchoolDim.StudentSchoolKey AS StudentSchoolKey
-    ,StudentSchoolDim.StudentKey AS StudentKey
+    ,StudentSchoolDim.StudentSchoolKey
+    ,StudentSchoolDim.StudentKey
     ,CAST(StudentSchoolDim.[EnrollmentDateKey] AS DATE) AS EntryDate
     ,StudentSchoolDim.[SchoolKey]
 FROM [analytics].[StudentSchoolDim];
 
 GO
 
-CREATE OR ALTER VIEW [bi].[equity.StudentSectionAssociation]
+CREATE OR ALTER VIEW [BI].[equity.StudentSectionAssociation]
 AS
 SELECT CONCAT (
         StudentSectionDim.[StudentKey]
@@ -67,18 +65,16 @@ SELECT CONCAT (
         ,StudentSectionDim.[SchoolKey]
         ) AS StudentSchoolKey
     ,StudentSectionDim.StudentSectionKey
-    ,StudentSectionDim.SchoolKey AS SchoolKey
+    ,StudentSectionDim.SchoolKey
     ,StudentSectionDim.SectionKey
-    ,StudentSectionDim.LocalCourseCode AS LocalCourseCode
-    ,StudentSectionDim.SchoolYear AS SchoolYear
+    ,StudentSectionDim.SchoolYear
     ,CAST(StudentSectionDim.StudentSectionStartDateKey AS DATE) AS BeginDate
     ,CAST(StudentSectionDim.StudentSectionEndDateKey AS DATE) AS EndDate
-    ,SchoolDim.LocalEducationAgencyKey AS LocalEducationAgencyId
 FROM analytics.StudentSectionDim
 INNER JOIN analytics.SchoolDim ON StudentSectionDim.SchoolKey = SchoolDim.SchoolKey;
 GO
 
-CREATE OR ALTER VIEW [bi].[equity.StaffSection]
+CREATE OR ALTER VIEW [BI].[equity.StaffSection]
 AS
 
 SELECT s.StaffUSI
@@ -112,13 +108,7 @@ FROM analytics.StaffSectionDim s;
 
 GO
 
-
-
-
-
-
-
-CREATE OR ALTER VIEW [bi].[equity.Assessment]
+CREATE OR ALTER VIEW [BI].[equity.Assessment]
 AS
 SELECT DISTINCT [AssessmentKey]
     ,CONCAT_WS('-', [AssessmentKey], IdentificationCode, LearningStandard) AS [AssessmentIdentificationCodeKey]
@@ -139,7 +129,7 @@ GO
 SET QUOTED_IDENTIFIER ON;
 GO
 
-CREATE OR ALTER VIEW [bi].[equity.StudentAssessmentScoreResult]
+CREATE OR ALTER VIEW [BI].[equity.StudentAssessmentScoreResult]
 AS
 SELECT DISTINCT aaf.AssessmentKey
     ,CONCAT_WS('-', aaf.[AssessmentKey], aaf.IdentificationCode, aaf.LearningStandard) AS [AssessmentIdentificationCodeKey]
