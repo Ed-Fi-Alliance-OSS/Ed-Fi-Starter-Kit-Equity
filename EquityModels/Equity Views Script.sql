@@ -88,8 +88,6 @@ SELECT s.StaffUSI
         ,s.FirstName
         ) AS StaffName
     ,s.BirthDate
-    ,s.SexType
-    ,s.RaceType
     ,CASE 
         WHEN s.HispanicLatinoEthnicity = 1
             THEN 'True'
