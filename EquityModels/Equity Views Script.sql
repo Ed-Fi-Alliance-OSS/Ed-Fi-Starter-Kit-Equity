@@ -338,7 +338,9 @@ SET ANSI_NULLS ON;
 GO
 SET QUOTED_IDENTIFIER ON;
 GO
-
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a new candidate to be included in the new Equity collection.
 CREATE OR ALTER VIEW [BI].[equity.FeederSchool]
 AS
 SELECT
@@ -381,7 +383,9 @@ SET ANSI_NULLS ON;
 GO
 SET QUOTED_IDENTIFIER ON;
 GO
-
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a new candidate to be included in the new Equity collection.
 CREATE OR ALTER VIEW [BI].[equity.Cohort]
 AS
 SELECT
