@@ -150,4 +150,30 @@ INNER JOIN analytics.asmt_AssessmentFact aaf ON sa.AssessmentKey = aaf.Assessmen
 WHERE sa.ReportingMethod IN ('Raw Score');
 GO
 
+SET ANSI_NULLS ON;
+GO
 
+SET QUOTED_IDENTIFIER ON;
+GO
+
+CREATE OR ALTER VIEW [BI].[equity.Student]
+AS
+select DISTINCT ssd.StudentKey
+    ,ssd.StudentSectionKey
+    ,ssgf.NumericGradeEarned as GradeSummary
+    ,DateDim.DateKey
+    ,Attendance.SchoolKey
+    ,(Attendance.DaysEnrolled - Attendance.DaysAbsent) / Attendance.DaysEnrolled as AttendaceHistory
+    ,1 as ReferralsAndSuspensions
+    ,1 as EnrollmentHistory
+from analytics.DateDim
+    outer apply (
+        select StudentKey,SchoolKey,
+        count(1) as DaysEnrolled,
+        sum(ReportedAsAbsentFromHomeRoom) as DaysAbsent
+        from analytics.chrab_ChronicAbsenteeismAttendanceFact
+        where chrab_ChronicAbsenteeismAttendanceFact.DateKey < DateDim.DateKey
+        group by StudentKey,SchoolKey
+    ) as Attendance
+inner join analytics.StudentSectionDim ssd on ssd.StudentKey = Attendance.StudentKey
+INNER JOIN analytics.ews_StudentSectionGradeFact ssgf on ssgf.StudentSectionKey = ssd.StudentSectionKey
