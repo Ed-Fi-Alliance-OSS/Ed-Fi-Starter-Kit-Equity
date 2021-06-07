@@ -176,10 +176,11 @@ SELECT DISTINCT studentSchoolDim.StudentKey
     ,(DaysEnrolled - DaysAbsent) / DaysEnrolled AS AttendanceRate
     ,DaysEnrolled
     ,DaysAbsent
-    ,1 AS ReferralsAndSuspensions
+    ,(SELECT COUNT(1) FROM edfi.DisciplineActionStudentDisciplineIncidentAssociation discipline WHERE discipline.StudentUSI = student.StudentUSI AND discipline.SchoolId = studentSchoolDim.SchoolKey) AS ReferralsAndSuspensions
     ,(SELECT STRING_AGG(SchoolName, ', ') FROM analytics.StudentSchoolDim ssd INNER JOIN analytics.SchoolDim school ON school.SchoolKey = ssd.SchoolKey
         WHERE ssd.StudentKey = studentSectionDim.StudentKey AND ssd.SchoolKey != ah.SchoolKey) AS EnrollmentHistory
 FROM analytics.StudentSchoolDim studentSchoolDim
 INNER JOIN analytics.StudentSectionDim studentSectionDim ON StudentSectionDim.StudentKey = studentSchoolDim.StudentKey
 INNER JOIN analytics.ews_StudentSectionGradeFact gradeFact ON gradeFact.StudentKey = studentSectionDim.StudentKey AND gradeFact.SectionKey = studentSectionDim.SectionKey
 LEFT OUTER JOIN AttendanceHist ah ON ah.StudentKey = studentSectionDim.StudentKey
+INNER JOIN edfi.Student student on student.StudentUniqueId = studentSchoolDim.StudentKey
