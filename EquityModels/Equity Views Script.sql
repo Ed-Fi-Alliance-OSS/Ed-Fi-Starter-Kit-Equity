@@ -158,22 +158,28 @@ GO
 
 CREATE OR ALTER VIEW [BI].[equity.Student]
 AS
-select DISTINCT ssd.StudentKey
-    ,ssd.StudentSectionKey
-    ,ssgf.NumericGradeEarned as GradeSummary
-    ,DateDim.DateKey
-    ,Attendance.SchoolKey
-    ,(Attendance.DaysEnrolled - Attendance.DaysAbsent) / Attendance.DaysEnrolled as AttendaceHistory
-    ,1 as ReferralsAndSuspensions
-    ,1 as EnrollmentHistory
-from analytics.DateDim
-    outer apply (
-        select StudentKey,SchoolKey,
-        count(1) as DaysEnrolled,
-        sum(ReportedAsAbsentFromHomeRoom) as DaysAbsent
-        from analytics.chrab_ChronicAbsenteeismAttendanceFact
-        where chrab_ChronicAbsenteeismAttendanceFact.DateKey < DateDim.DateKey
-        group by StudentKey,SchoolKey
-    ) as Attendance
-inner join analytics.StudentSectionDim ssd on ssd.StudentKey = Attendance.StudentKey
-INNER JOIN analytics.ews_StudentSectionGradeFact ssgf on ssgf.StudentSectionKey = ssd.StudentSectionKey
+WITH AttendanceHist AS (
+  SELECT
+    StudentKey,
+    SchoolKey,
+    COUNT(1) AS DaysEnrolled,
+    SUM(ReportedAsAbsentFromHomeRoom) AS DaysAbsent
+  FROM
+    analytics.chrab_ChronicAbsenteeismAttendanceFact
+  GROUP BY
+    StudentKey,
+    SchoolKey
+)
+SELECT DISTINCT studentSchoolDim.StudentKey
+    ,gradeFact.NumericGradeEarned AS GradeSummary
+    ,studentSchoolDim.SchoolKey AS CurrentSchoolKey
+    ,(DaysEnrolled - DaysAbsent) / DaysEnrolled AS AttendanceRate
+    ,DaysEnrolled
+    ,DaysAbsent
+    ,1 AS ReferralsAndSuspensions
+    ,(SELECT STRING_AGG(SchoolName, ', ') FROM analytics.StudentSchoolDim ssd INNER JOIN analytics.SchoolDim school ON school.SchoolKey = ssd.SchoolKey
+        WHERE ssd.StudentKey = studentSectionDim.StudentKey AND ssd.SchoolKey != ah.SchoolKey) AS EnrollmentHistory
+FROM analytics.StudentSchoolDim studentSchoolDim
+INNER JOIN analytics.StudentSectionDim studentSectionDim ON StudentSectionDim.StudentKey = studentSchoolDim.StudentKey
+INNER JOIN analytics.ews_StudentSectionGradeFact gradeFact ON gradeFact.StudentKey = studentSectionDim.StudentKey AND gradeFact.SectionKey = studentSectionDim.SectionKey
+LEFT OUTER JOIN AttendanceHist ah ON ah.StudentKey = studentSectionDim.StudentKey
