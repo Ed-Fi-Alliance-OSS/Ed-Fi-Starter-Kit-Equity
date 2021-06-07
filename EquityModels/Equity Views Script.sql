@@ -180,6 +180,7 @@ CREATE OR ALTER VIEW [BI].[equity.StudentGender]
 AS
 SELECT
 	StudentSchoolKey
+	,CONCAT(Sex, '-', StudentSchoolKey) AS StudentSchoolKeyGenderKey
 	,StudentKey
 	,SchoolKey
 	,Sex AS Gender
