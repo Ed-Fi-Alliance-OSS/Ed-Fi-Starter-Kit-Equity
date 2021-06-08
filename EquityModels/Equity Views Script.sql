@@ -156,7 +156,7 @@ GO
 SET QUOTED_IDENTIFIER ON;
 GO
 
-CREATE OR ALTER VIEW [BI].[equity.Student]
+CREATE OR ALTER VIEW [BI].[equity.StudentHistory]
 AS
 WITH AttendanceHist AS (
   SELECT
