@@ -427,11 +427,11 @@ GO
 -- Looks like a candidate to be included in the new Equity collection.
 CREATE OR ALTER VIEW [BI].[equity.DisciplineAction]
 AS
-SELECT 
+SELECT
 	CONCAT(DisciplineAction.DisciplineActionIdentifier, '-', DisciplineAction.DisciplineDate, '-', DisciplineAction.StudentUSI) AS DisciplineActionUniqueKey,
 	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey,
 	Student.StudentUniqueId AS StudentKey,
-	School.SchoolId AS SchoolKey,
+	StudentSchoolAssociation.SchoolId AS SchoolKey,
 	Descriptor.Description AS DisciplineActionDescription,
 	DisciplineActionStaff.StaffUSI
 FROM
@@ -442,9 +442,6 @@ INNER JOIN
 INNER JOIN
     edfi.StudentSchoolAssociation ON
 		Student.StudentUSI = StudentSchoolAssociation.StudentUSI
-INNER JOIN
-    edfi.School ON
-	    StudentSchoolAssociation.SchoolId = School.SchoolId
 INNER JOIN
 	edfi.DisciplineActionDiscipline ON
 		DisciplineAction.DisciplineActionIdentifier = DisciplineActionDiscipline.DisciplineActionIdentifier
