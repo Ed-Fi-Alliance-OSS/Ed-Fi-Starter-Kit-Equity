@@ -173,7 +173,7 @@ WITH AttendanceHist AS (
 SELECT DISTINCT studentSchoolDim.StudentKey
     ,gradeFact.NumericGradeEarned AS GradeSummary
     ,studentSchoolDim.SchoolKey AS CurrentSchoolKey
-    ,(DaysEnrolled - DaysAbsent) / DaysEnrolled AS AttendanceRate
+    ,CAST((DaysEnrolled - DaysAbsent) as decimal) / CAST(DaysEnrolled as decimal)*100 AS AttendanceRate
     --TODO: replace this with new analytics view
     ,(SELECT COUNT(1) FROM edfi.DisciplineActionStudentDisciplineIncidentAssociation discipline WHERE discipline.StudentUSI = student.StudentUSI AND discipline.SchoolId = studentSchoolDim.SchoolKey) AS ReferralsAndSuspensions
     --TODO: replace 1/1/2020 with Withrdaw Date once its added to analytics view
