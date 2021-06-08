@@ -150,4 +150,309 @@ INNER JOIN analytics.asmt_AssessmentFact aaf ON sa.AssessmentKey = aaf.Assessmen
 WHERE sa.ReportingMethod IN ('Raw Score');
 GO
 
+-- Student Demographics: Ethnicity/Race
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+CREATE OR ALTER VIEW [BI].[equity.Ethnicity_Race]
+AS 
+SELECT
+	StudentSchoolDemographicBridgeKey
+	,StudentSchoolKey
+	,DemographicDim.DemographicKey
+	,DemographicLabel
+FROM
+	analytics.StudentSchoolDemographicsBridge
+INNER JOIN
+	analytics.DemographicDim ON
+		StudentSchoolDemographicsBridge.DemographicKey = DemographicDim.DemographicKey
+WHERE
+	DemographicParentKey = 'Race';
+GO
 
+-- Gender
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+CREATE OR ALTER VIEW [BI].[equity.StudentGender]
+AS
+SELECT
+	StudentSchoolKey
+	,CONCAT(Sex, '-', StudentSchoolKey) AS StudentSchoolKeyGenderKey
+	,StudentKey
+	,SchoolKey
+	,Sex AS Gender
+FROM
+	analytics.StudentSchoolDim;
+GO
+
+-- Residence Zip Code
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- For now we are returning the full address. 
+-- Talked with David Clements, and we can add this individual field to ContactPersonDim, then change this to return it, instead of the ContactHomeAddress
+CREATE OR ALTER VIEW [BI].[equity.ResidenceZipCode]
+AS
+SELECT
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
+	,StudentSchoolAssociation.SchoolId AS SchoolKey
+	,StudentKey
+	,ContactHomeAddress
+FROM
+	analytics.ContactPersonDim
+INNER JOIN
+	edfi.Student ON
+		ContactPersonDim.StudentKey = Student.StudentUniqueId
+INNER JOIN
+    edfi.StudentSchoolAssociation ON
+		Student.StudentUSI = StudentSchoolAssociation.StudentUSI
+INNER JOIN
+	edfi.Descriptor ON
+	    StudentSchoolAssociation.EntryGradeLevelDescriptorId = Descriptor.DescriptorId
+INNER JOIN
+    edfi.School ON
+	    StudentSchoolAssociation.SchoolId = School.SchoolId
+WHERE
+	IsPrimaryContact = 1;
+GO
+
+-- Age
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- We currently don't have a field with the date of birth. 
+-- We can include it in the StudentSchoolDim. Talked to David and this is fine.
+-- Then we need to change this view to use this new field.
+CREATE OR ALTER VIEW [BI].[equity.StudentAge]
+AS
+SELECT
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
+	,Student.StudentUniqueId as StudentKey
+	,StudentSchoolAssociation.SchoolId as SchoolKey
+	,DATEDIFF(hour,Student.BirthDate,GETDATE())/8766 AS StudentAge
+FROM
+	edfi.Student
+INNER JOIN
+    edfi.StudentSchoolAssociation ON
+		Student.StudentUSI = StudentSchoolAssociation.StudentUSI
+INNER JOIN
+	edfi.Descriptor ON
+	    StudentSchoolAssociation.EntryGradeLevelDescriptorId = Descriptor.DescriptorId
+INNER JOIN
+    edfi.School ON
+	    StudentSchoolAssociation.SchoolId = School.SchoolId
+GO
+
+-- Linch Status
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a new candidate to be included in the new Equity collection.
+CREATE OR ALTER VIEW [BI].[equity.LunchStatus]
+AS 
+SELECT
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
+	,StudentSchoolFoodServiceProgramAssociation.ProgramName
+	,ProgramTypeDescriptor.CodeValue as ProgramTypeDescriptor
+	,SchoolFoodServiceProgramServiceDescriptor.Description as SchoolFoodServiceProgramServiceDescriptor --This is the field we are interested in, for the lunch status filter.
+FROM 
+	edfi.StudentSchoolFoodServiceProgramAssociation
+INNER JOIN	
+	edfi.Descriptor ProgramTypeDescriptor ON
+		StudentSchoolFoodServiceProgramAssociation.ProgramTypeDescriptorId = ProgramTypeDescriptor.DescriptorId
+INNER JOIN
+	edfi.StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService ON
+		StudentSchoolFoodServiceProgramAssociation.BeginDate = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.BeginDate
+		AND StudentSchoolFoodServiceProgramAssociation.EducationOrganizationId = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.EducationOrganizationId
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramEducationOrganizationId = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.ProgramEducationOrganizationId
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramName = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.ProgramName
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramTypeDescriptorId = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.ProgramTypeDescriptorId
+		AND StudentSchoolFoodServiceProgramAssociation.StudentUSI = StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.StudentUSI
+INNER JOIN 
+	edfi.GeneralStudentProgramAssociation ON
+		StudentSchoolFoodServiceProgramAssociation.BeginDate = GeneralStudentProgramAssociation.BeginDate
+		AND StudentSchoolFoodServiceProgramAssociation.EducationOrganizationId = GeneralStudentProgramAssociation.EducationOrganizationId
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramEducationOrganizationId = GeneralStudentProgramAssociation.ProgramEducationOrganizationId
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramName = GeneralStudentProgramAssociation.ProgramName
+		AND StudentSchoolFoodServiceProgramAssociation.ProgramTypeDescriptorId = GeneralStudentProgramAssociation.ProgramTypeDescriptorId
+		AND StudentSchoolFoodServiceProgramAssociation.StudentUSI = GeneralStudentProgramAssociation.StudentUSI
+INNER JOIN
+	edfi.Descriptor SchoolFoodServiceProgramServiceDescriptor ON
+		StudentSchoolFoodServiceProgramAssociationSchoolFoodServiceProgramService.SchoolFoodServiceProgramServiceDescriptorId = SchoolFoodServiceProgramServiceDescriptor.DescriptorId
+INNER JOIN
+	edfi.Student ON
+		GeneralStudentProgramAssociation.StudentUSI = Student.StudentUSI
+INNER JOIN
+    edfi.StudentSchoolAssociation ON
+        Student.StudentUSI = StudentSchoolAssociation.StudentUSI
+INNER JOIN
+    edfi.Descriptor ON
+        StudentSchoolAssociation.EntryGradeLevelDescriptorId = Descriptor.DescriptorId;
+GO
+
+-- Program Types.
+-- Based on a conversation with David Clements, we are removing 'ESE and 504 Status' filter and 'ELL Status' filter.
+-- And instead of those, we are adding a Program Type filter.
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+CREATE OR ALTER VIEW [BI].[equity.ProgramTypes]
+AS
+SELECT
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
+	,Student.StudentUniqueId as StudentKey
+	,StudentSchoolAssociation.SchoolId as SchoolKey
+	,Program.ProgramName
+	,Descriptor.Description as ProgramType --This is the field we need for the filter.
+FROM
+	edfi.Program
+INNER JOIN
+    edfi.ProgramTypeDescriptor ON
+		Program.ProgramTypeDescriptorId = ProgramTypeDescriptor.ProgramTypeDescriptorId
+INNER JOIN
+	edfi.Descriptor ON
+		ProgramTypeDescriptor.ProgramTypeDescriptorId = Descriptor.DescriptorId
+INNER JOIN
+    [edfi].[StudentProgramAssociation] StudentProgram ON 
+		StudentProgram.ProgramName = Program.ProgramName
+		AND StudentProgram.ProgramTypeDescriptorId = Program.ProgramTypeDescriptorId
+		AND StudentProgram.ProgramEducationOrganizationId = Program.EducationOrganizationId
+INNER JOIN 
+    edfi.Student ON 
+		StudentProgram.StudentUSI = Student.StudentUSI
+INNER JOIN 
+    edfi.StudentSchoolAssociation ON 
+		Student.StudentUSI = edfi.StudentSchoolAssociation.StudentUSI
+GO
+
+-- Feeder School
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a new candidate to be included in the new Equity collection.
+CREATE OR ALTER VIEW [BI].[equity.FeederSchool]
+AS
+SELECT
+	FeederSchoolAssociation.SchoolId AS SchoolKey
+	,FeederSchoolAssociation.FeederSchoolId AS FeederSchoolKey
+	,EducationOrganization.NameOfInstitution as FeederSchoolName --This is the field we need for the feeder school filter.
+FROM
+    edfi.FeederSchoolAssociation
+INNER JOIN
+	edfi.School ON
+		FeederSchoolAssociation.SchoolId = School.SchoolId
+INNER JOIN
+	edfi.School FeederSchool ON
+		FeederSchoolAssociation.FeederSchoolId = FeederSchool.SchoolId
+INNER JOIN
+	edfi.EducationOrganization ON 
+		FeederSchool.SchoolId = EducationOrganization.EducationOrganizationId
+GO
+
+-- Student Programs
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+
+CREATE OR ALTER VIEW [BI].[equity.StudentPrograms]
+AS
+SELECT
+	BeginDate
+	,EducationOrganizationId
+	,ProgramName
+	,StudentUSI
+	,StudentSchoolKey
+FROM
+	[analytics].[StudentProgramDim]
+GO
+
+-- Cohort
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a new candidate to be included in the new Equity collection.
+CREATE OR ALTER VIEW [BI].[equity.Cohort]
+AS
+SELECT
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
+	,Cohort.CohortDescription --This is the field we need for the filter.
+	,Program.ProgramName
+FROM
+	edfi.Cohort
+INNER JOIN
+	edfi.CohortProgram ON
+		Cohort.CohortIdentifier = CohortProgram.CohortIdentifier
+		AND Cohort.EducationOrganizationId = CohortProgram.EducationOrganizationId
+INNER JOIN
+	edfi.Program ON
+		CohortProgram.EducationOrganizationId = program.EducationOrganizationId
+		AND CohortProgram.ProgramName = program.ProgramName
+		AND CohortProgram.ProgramTypeDescriptorId = program.ProgramTypeDescriptorId
+INNER JOIN
+    [edfi].[StudentProgramAssociation] StudentProgram ON 
+		StudentProgram.ProgramName = Program.ProgramName
+		AND StudentProgram.ProgramTypeDescriptorId = Program.ProgramTypeDescriptorId
+		AND StudentProgram.ProgramEducationOrganizationId = Program.EducationOrganizationId
+INNER JOIN 
+    edfi.Student ON 
+		StudentProgram.StudentUSI = Student.StudentUSI
+INNER JOIN 
+    edfi.StudentSchoolAssociation ON 
+		Student.StudentUSI = edfi.StudentSchoolAssociation.StudentUSI
+GO
+
+-- Discipline Actions
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a candidate to be included in the new Equity collection.
+CREATE OR ALTER VIEW [BI].[equity.DisciplineAction]
+AS
+SELECT
+	CONCAT(DisciplineAction.DisciplineActionIdentifier, '-', DisciplineAction.DisciplineDate, '-', DisciplineAction.StudentUSI) AS DisciplineActionUniqueKey,
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey,
+	Student.StudentUniqueId AS StudentKey,
+	StudentSchoolAssociation.SchoolId AS SchoolKey,
+	Descriptor.Description AS DisciplineActionDescription,
+	DisciplineActionStaff.StaffUSI
+FROM
+	edfi.DisciplineAction
+INNER JOIN
+	edfi.Student ON
+		DisciplineAction.StudentUSI = Student.StudentUSI
+INNER JOIN
+    edfi.StudentSchoolAssociation ON
+		Student.StudentUSI = StudentSchoolAssociation.StudentUSI
+INNER JOIN
+	edfi.DisciplineActionDiscipline ON
+		DisciplineAction.DisciplineActionIdentifier = DisciplineActionDiscipline.DisciplineActionIdentifier
+		AND DisciplineAction.DisciplineDate = DisciplineActionDiscipline.DisciplineDate
+		AND DisciplineAction.StudentUSI = DisciplineActionDiscipline.StudentUSI
+INNER JOIN
+	edfi.Descriptor ON
+		DisciplineActionDiscipline.DisciplineDescriptorId = Descriptor.DescriptorId
+LEFT JOIN
+	edfi.DisciplineActionStaff ON
+		DisciplineAction.DisciplineActionIdentifier = DisciplineActionStaff.DisciplineActionIdentifier
+		AND DisciplineAction.DisciplineDate = DisciplineActionStaff.DisciplineDate
+		AND DisciplineAction.StudentUSI = DisciplineActionStaff.StudentUSI;
+GO
