@@ -491,3 +491,4 @@ INNER JOIN analytics.StudentSectionDim studentSectionDim ON StudentSectionDim.St
 INNER JOIN analytics.ews_StudentSectionGradeFact gradeFact ON gradeFact.StudentKey = studentSectionDim.StudentKey AND gradeFact.SectionKey = studentSectionDim.SectionKey
 LEFT OUTER JOIN AttendanceHist ah ON ah.StudentKey = studentSectionDim.StudentKey
 INNER JOIN edfi.Student student on student.StudentUniqueId = studentSchoolDim.StudentKey
+
