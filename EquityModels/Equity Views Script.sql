@@ -416,3 +416,46 @@ INNER JOIN
     edfi.StudentSchoolAssociation ON 
 		Student.StudentUSI = edfi.StudentSchoolAssociation.StudentUSI
 GO
+
+-- Discipline Actions
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+-- This is data that we currently don't have in AMT. 
+-- We will need to figure out what the best way in include this data is.
+-- Looks like a candidate to be included in the new Equity collection.
+CREATE OR ALTER VIEW [BI].[equity.DisciplineAction]
+AS
+SELECT 
+	CONCAT(DisciplineAction.DisciplineActionIdentifier, '-', DisciplineAction.DisciplineDate, '-', DisciplineAction.StudentUSI) AS DisciplineActionUniqueKey,
+	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey,
+	Student.StudentUniqueId AS StudentKey,
+	School.SchoolId AS SchoolKey,
+	Descriptor.Description AS DisciplineActionDescription,
+	DisciplineActionStaff.StaffUSI
+FROM
+	edfi.DisciplineAction
+INNER JOIN
+	edfi.Student ON
+		DisciplineAction.StudentUSI = Student.StudentUSI
+INNER JOIN
+    edfi.StudentSchoolAssociation ON
+		Student.StudentUSI = StudentSchoolAssociation.StudentUSI
+INNER JOIN
+    edfi.School ON
+	    StudentSchoolAssociation.SchoolId = School.SchoolId
+INNER JOIN
+	edfi.DisciplineActionDiscipline ON
+		DisciplineAction.DisciplineActionIdentifier = DisciplineActionDiscipline.DisciplineActionIdentifier
+		AND DisciplineAction.DisciplineDate = DisciplineActionDiscipline.DisciplineDate
+		AND DisciplineAction.StudentUSI = DisciplineActionDiscipline.StudentUSI
+INNER JOIN
+	edfi.Descriptor ON
+		DisciplineActionDiscipline.DisciplineDescriptorId = Descriptor.DescriptorId
+LEFT JOIN
+	edfi.DisciplineActionStaff ON
+		DisciplineAction.DisciplineActionIdentifier = DisciplineActionStaff.DisciplineActionIdentifier
+		AND DisciplineAction.DisciplineDate = DisciplineActionStaff.DisciplineDate
+		AND DisciplineAction.StudentUSI = DisciplineActionStaff.StudentUSI;
+GO
