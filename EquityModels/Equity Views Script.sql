@@ -456,3 +456,39 @@ LEFT JOIN
 		AND DisciplineAction.DisciplineDate = DisciplineActionStaff.DisciplineDate
 		AND DisciplineAction.StudentUSI = DisciplineActionStaff.StudentUSI;
 GO
+
+SET ANSI_NULLS ON;
+GO
+
+SET QUOTED_IDENTIFIER ON;
+GO
+
+CREATE OR ALTER VIEW [BI].[equity.StudentHistory]
+AS
+WITH AttendanceHist AS (
+  SELECT
+    StudentKey,
+    SchoolKey,
+    COUNT(1) AS DaysEnrolled,
+    SUM(ReportedAsAbsentFromHomeRoom) AS DaysAbsent
+  FROM
+    analytics.chrab_ChronicAbsenteeismAttendanceFact
+  GROUP BY
+    StudentKey,
+    SchoolKey
+)
+SELECT DISTINCT studentSchoolDim.StudentKey
+    ,gradeFact.NumericGradeEarned AS GradeSummary
+    ,studentSchoolDim.SchoolKey AS CurrentSchoolKey
+    ,CAST((DaysEnrolled - DaysAbsent) as decimal) / CAST(DaysEnrolled as decimal)*100 AS AttendanceRate
+    --TODO: replace this with new analytics view
+    ,(SELECT COUNT(1) FROM edfi.DisciplineActionStudentDisciplineIncidentAssociation discipline WHERE discipline.StudentUSI = student.StudentUSI AND discipline.SchoolId = studentSchoolDim.SchoolKey) AS ReferralsAndSuspensions
+    --TODO: replace 1/1/2020 with Withrdaw Date once its added to analytics view
+    ,(SELECT STRING_AGG(SchoolName + ' 1/1/2020', ', ') FROM analytics.StudentSchoolDim ssd INNER JOIN analytics.SchoolDim school ON school.SchoolKey = ssd.SchoolKey
+        WHERE ssd.StudentKey = studentSectionDim.StudentKey) AS EnrollmentHistory
+FROM analytics.StudentSchoolDim studentSchoolDim
+INNER JOIN analytics.StudentSectionDim studentSectionDim ON StudentSectionDim.StudentKey = studentSchoolDim.StudentKey
+INNER JOIN analytics.ews_StudentSectionGradeFact gradeFact ON gradeFact.StudentKey = studentSectionDim.StudentKey AND gradeFact.SectionKey = studentSectionDim.SectionKey
+LEFT OUTER JOIN AttendanceHist ah ON ah.StudentKey = studentSectionDim.StudentKey
+INNER JOIN edfi.Student student on student.StudentUniqueId = studentSchoolDim.StudentKey
+
