@@ -159,7 +159,8 @@ CREATE OR ALTER VIEW [BI].[equity.Ethnicity_Race]
 AS 
 SELECT
 	StudentSchoolDemographicBridgeKey
-	,StudentSchoolKey
+	,StudentSchoolDemographicsBridge.StudentSchoolKey
+	,StudentSchoolDim.SchoolKey
 	,DemographicDim.DemographicKey
 	,DemographicLabel
 FROM
@@ -167,6 +168,8 @@ FROM
 INNER JOIN
 	analytics.DemographicDim ON
 		StudentSchoolDemographicsBridge.DemographicKey = DemographicDim.DemographicKey
+INNER JOIN analytics.StudentSchoolDim 
+ON StudentSchoolDemographicsBridge.StudentSchoolKey = StudentSchoolDim.StudentSchoolKey
 WHERE
 	DemographicParentKey = 'Race';
 GO
