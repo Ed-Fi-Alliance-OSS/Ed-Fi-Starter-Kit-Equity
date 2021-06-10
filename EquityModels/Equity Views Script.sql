@@ -481,6 +481,7 @@ WITH AttendanceHist AS (
     SchoolKey
 )
 SELECT DISTINCT studentSchoolDim.StudentKey
+    ,studentSchoolDim.StudentSchoolKey
     ,gradeFact.NumericGradeEarned AS GradeSummary
     ,studentSchoolDim.SchoolKey AS CurrentSchoolKey
     ,CAST((DaysEnrolled - DaysAbsent) as decimal) / CAST(DaysEnrolled as decimal)*100 AS AttendanceRate
