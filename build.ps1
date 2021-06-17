@@ -42,9 +42,9 @@ if ($null -eq (Get-VMSwitch -Name $vmSwitch -ErrorAction SilentlyContinue)) {
 # Compress our PowerShell to a zip archive
 Compress-Archive -Path .\PowerShell -Destination .\Equity-Starter-Kit.zip -Force
 
-Compress-Archive -Path '.\EquityModels\Equity Starter Kit.pbix' -DestinationPath .\Equity-Starter-Kit -Update
+Compress-Archive -Path '.\EquityModels\Equity Starter Kit.pbix' -DestinationPath .\Equity-Starter-Kit.zip -Update
 
-Compress-Archive -Path '.\EquityModels\Equity Views Script.sql' -DestinationPath .\Equity-Starter-Kit -Update
+Compress-Archive -Path '.\EquityModels\Equity Views Script.sql' -DestinationPath .\Equity-Starter-Kit.zip -Update
 
 # Kick off the packer build with the force to override prior builds
 if($isoUrl -eq "") {
