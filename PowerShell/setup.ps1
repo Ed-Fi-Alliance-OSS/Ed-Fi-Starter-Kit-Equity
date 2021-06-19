@@ -127,7 +127,7 @@ function Install-PreRequisites(){
     Enable-RequiredIisFeatures
     choco install dotnetfx -y --ignore-pending-reboot --execution-timeout=$installTimeout
     choco install dotnetcore-sdk -y --ignore-pending-reboot --execution-timeout=$installTimeout
-    choco install dotnetcore-3.1-windowshosting -y --ignore-pending-reboot --execution-timeout=$installTimeout
+    choco install dotnetcore-3.1-windowshosting --version=3.1.15 -y --ignore-pending-reboot --execution-timeout=$installTimeout
     choco install sql-server-express -y --params=`"'/IgnorePendingReboot'`" --execution-timeout=$installTimeout
     
     Create-Sql-Alias

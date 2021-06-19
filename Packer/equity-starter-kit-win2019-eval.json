@@ -42,7 +42,7 @@
                 "Set-ExecutionPolicy bypass;",
                 "Set-Location C:\\temp;",
                 "Expand-Archive .\\{{user `archive_name`}}.zip -Destination .\\{{user `archive_name`}}",
-                "Copy-Item '.\\{{user `archive_name`}}\\Equity Views Script.sql' -Destination '{{user `archive_name`}}\\Powershell\\Utils\\Data_inserts\\Equity Views Script.sql'"
+                "Copy-Item '.\\{{user `archive_name`}}\\Equity Views Script.sql' -Destination '{{user `archive_name`}}\\Powershell\\Utils\\Equity_views\\Equity Views Script.sql'"
             ],
             "type": "powershell",
             "elevated_user": "vagrant",
@@ -93,6 +93,17 @@
                 "Set-Location C:\\temp\\Equity-Starter-Kit",
                 "Copy-Item '.\\Equity Starter Kit.pbix' -Destination 'C:\\Users\\Public\\Desktop\\Equity Starter Kit.pbix'",
                 "Copy-Item '.\\PowerShell\\index.html' -Destination 'C:\\Users\\Public\\Desktop\\index.html'"
+            ],
+            "type": "powershell",
+            "elevated_user": "vagrant",
+            "elevated_password": "vagrant"
+        },
+        {
+            "debug_mode": "{{ user `debug_mode` }}",
+            "inline": [
+                "Set-ExecutionPolicy Bypass",
+                "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Equity_views",
+                ".\\equity_views.ps1"
             ],
             "type": "powershell",
             "elevated_user": "vagrant",
