@@ -1,0 +1,22 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.sqlite
+*.suo
+*.log
+packer_cache
+*.vhdx
+output-hyperv-iso
+*.iso
+packer.log.txt
+Packer/scripts/downloads
+*.zip
+
+bin/
+obj/
+Properties/
+.vs/
+*.settings
+
+Model.bim.layout

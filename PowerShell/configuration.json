@@ -1,0 +1,91 @@
+{
+    "downloadDirectory": "C:\\temp",
+    "webSiteName": "Ed-Fi",
+    "installDatabases": true,
+    "databases": {
+        "applicationCredentials": {
+            "databaseUser": "",
+            "databasePassword": "",
+            "useIntegratedSecurity": true
+        },
+        "installCredentials": {
+            "databaseUser": "",
+            "databasePassword": "",
+            "useIntegratedSecurity": true
+        },
+        "engine": "SQLServer",
+        "databaseServer": ".\\SQLEXPRESS",
+        "databasePort": "",
+        "adminDatabaseName": "EdFi_Admin",
+        "odsDatabaseName": "EdFi_Ods",
+        "securityDatabaseName": "EdFi_Security",
+        "useTemplates": false,
+        "odsTemplate": "populated",
+        "noDuration": false,
+        "dropDatabases": true,
+        "databasePackageVersion": "5.2.14406",
+        "apiMode": "sharedinstance",
+        "odsTokens": [],
+        "useIntegratedSecurity": true
+    },
+
+    "installPrerequisites": true,
+
+    "installEdFiDatabases": true,
+
+    "installAdminApp": true,
+    "uninstallAdminApp": false,
+    "adminApp": {
+        "installationDirectory": "C:\\inetpub\\wwwroot\\Ed-Fi\\AdminApp",
+        "appStartUp": "OnPrem",
+        "odsApi": {
+            "apiUrl": ""
+        }
+    },
+
+    "installWebApi": true,
+    "uninstallWebApi": false,
+    "webapi": {
+        "installationDirectory": "C:\\inetpub\\wwwroot\\Ed-Fi\\EdFiOdsWebApi",
+        "webApiAppSettings": {
+            "excludedExtensionSources": "Sample,Homograph",
+            "extensions": "true",
+            "profiles": "false",
+            "openApiMetadata": "true",
+            "aggregateDependencies": "true",
+            "tokenInfo": "true",
+            "composites": "true",
+            "changeQueries": "true",
+            "identityManagement": "false",
+            "ownershipBasedAuthorization": "false",
+            "uniqueIdValidation": "false"
+        }
+    },
+
+    "installSwaggerUI": true,
+    "uninstallSwaggerUI": false,
+    "swaggerui": {
+        "installationDirectory": "C:\\inetpub\\wwwroot\\Ed-Fi\\SwaggerUI",
+        "swaggerAppSettings": {
+            "apiMetadataUrl": "",
+            "apiVersionUrl": ""
+        }
+    },
+
+    "installAMT": true,
+    "uninstallAMT": false,
+    "AMT": {
+        "version": "2.4.0",
+        "amtDownloadPath": "C:\\temp\\downloads",
+        "amtInstallerPath": "C:\\temp\\tools",
+        "options": "indexes rls qews ews chrab asmt"
+    },
+
+    "installBulkLoadClient": true,
+    "bulkLoadClientConfig": {
+        "urlDownloadODSSource": "https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS/archive/v5.1.0.zip",
+        "urlDownloadSamples": "https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-Standard/archive/v3.2.0-c.zip",
+        "urlDownloadSampleData": "https://techdocs.ed-fi.org/download/attachments/83787814/Ed-Fi-SampleDataLoad.zip?version=4&modificationDate=1604183677140&api=v2",
+        "urlODSImp": "https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS-Implementation/archive/v5.1.0.zip"
+    }
+}
