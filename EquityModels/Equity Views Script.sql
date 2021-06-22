@@ -93,6 +93,8 @@ SELECT s.StaffUSI
             THEN 'True'
         ELSE 'False'
         END AS HispanicLatinoEthnicity
+	,s.SexType
+	,s.RaceType
     ,s.YearsOfPriorProfessionalExperience
     ,s.YearsOfPriorTeachingExperience
     ,CASE 
