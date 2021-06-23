@@ -30,14 +30,15 @@ SELECT StudentKey
         	,SchoolKey;
 ```
 
-
-
 #### Attendance Rate
 
 With the values of DaysEnrolled and DaysAbsent, the calculation is performed to obtain the AttendanceRate of each student.
-$$
+
+```math
 AttendanceRate = 100*((DaysEnrolled - DaysAbsent) / DaysEnrolled)
-$$
+```
+
+SQL Query
 
 ```sql
 WITH AttendanceHist
