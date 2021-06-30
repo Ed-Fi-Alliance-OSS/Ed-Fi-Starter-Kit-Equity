@@ -20,96 +20,107 @@
             "switch_name": "{{user `vm_switch`}}"
         }
     ],
-    "provisioners": [
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy Bypass",
-                "New-Item C:\\temp\\downloads -ItemType Directory"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "type": "file",
-            "source": "{{template_dir}}/../{{user `archive_name`}}.zip",
-            "destination": "c:/temp/{{user `archive_name`}}.zip"
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy bypass;",
-                "Set-Location C:\\temp;",
-                "Expand-Archive .\\{{user `archive_name`}}.zip -Destination .\\{{user `archive_name`}}",
-                "Copy-Item '.\\{{user `archive_name`}}\\Equity Views Script.sql' -Destination '{{user `archive_name`}}\\Powershell\\Utils\\Equity_views\\Equity Views Script.sql'"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Rename-Computer -NewName 'equity'"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "type": "windows-restart",
-            "restart_check_command": "powershell -command \"& {Write-Output 'Setup complete. Restarting....'}\""
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy Bypass",
-                "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell",
-                ".\\setup.ps1"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "type": "windows-restart",
-            "restart_check_command": "powershell -command \"& {Write-Output 'Setup complete. Restarting....'}\""
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy Bypass",
-                "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell",
-                ".\\install.ps1"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-Location C:\\temp\\Equity-Starter-Kit",
-                "Copy-Item '.\\Equity Starter Kit.pbix' -Destination 'C:\\Users\\Public\\Desktop\\Equity Starter Kit.pbix'",
-                "Copy-Item '.\\PowerShell\\index.html' -Destination 'C:\\Users\\Public\\Desktop\\index.html'"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy Bypass",
-                "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Equity_views",
-                ".\\equity_views.ps1"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        }
-    ],
+  "provisioners": [
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy Bypass",
+        "New-Item C:\\temp\\downloads -ItemType Directory"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "type": "file",
+      "source": "{{template_dir}}/../{{user `archive_name`}}.zip",
+      "destination": "c:/temp/{{user `archive_name`}}.zip"
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy bypass;",
+        "Set-Location C:\\temp;",
+        "Expand-Archive .\\{{user `archive_name`}}.zip -Destination .\\{{user `archive_name`}}",
+        "Copy-Item '.\\{{user `archive_name`}}\\Equity Views Script.sql' -Destination '{{user `archive_name`}}\\Powershell\\Utils\\Equity_views\\Equity Views Script.sql'"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Rename-Computer -NewName 'equity'"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "type": "windows-restart",
+      "restart_check_command": "powershell -command \"& {Write-Output 'Setup complete. Restarting....'}\""
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy Bypass",
+        "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell",
+        ".\\setup.ps1"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "type": "windows-restart",
+      "restart_check_command": "powershell -command \"& {Write-Output 'Setup complete. Restarting....'}\""
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy Bypass",
+        "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell",
+        ".\\install.ps1"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-Location C:\\temp\\Equity-Starter-Kit",
+        "Copy-Item '.\\Equity Starter Kit.pbix' -Destination 'C:\\Users\\Public\\Desktop\\Equity Starter Kit.pbix'",
+        "Copy-Item '.\\PowerShell\\index.html' -Destination 'C:\\Users\\Public\\Desktop\\index.html'"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy Bypass",
+        "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Equity_views",
+        ".\\equity_views.ps1"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "debug_mode": "{{ user `debug_mode` }}",
+      "inline": [
+        "Set-ExecutionPolicy Bypass",
+        "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Data_inserts",
+        ".\\data_inserts.ps1"
+      ],
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    }
+  ],
     "variables": {
         "vm_name": "equity-starter-kit",
         "archive_name": "Equity-Starter-Kit",
