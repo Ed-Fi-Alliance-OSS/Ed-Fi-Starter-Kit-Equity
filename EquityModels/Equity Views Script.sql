@@ -77,15 +77,14 @@ GO
 CREATE OR ALTER VIEW [BI].[equity.StaffSection]
 AS
 
-SELECT s.StaffUSI
-    ,s.UserKey
+SELECT s.UserKey
     ,s.StaffSectionKey
     ,s.SectionKey
     ,s.PersonalTitlePrefix
     ,CONCAT (
-        s.LastSurname
+        s.StaffLastName
         ,', '
-        ,s.FirstName
+        ,s.StaffFirstName
         ) AS StaffName
     ,s.BirthDate
     ,CASE 
@@ -93,8 +92,8 @@ SELECT s.StaffUSI
             THEN 'True'
         ELSE 'False'
         END AS HispanicLatinoEthnicity
-	,s.SexType
-	,s.RaceType
+	,s.Sex
+	,s.Race
     ,s.YearsOfPriorProfessionalExperience
     ,s.YearsOfPriorTeachingExperience
     ,CASE 
