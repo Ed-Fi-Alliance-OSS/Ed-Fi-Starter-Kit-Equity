@@ -97,17 +97,6 @@
             "type": "powershell",
             "elevated_user": "vagrant",
             "elevated_password": "vagrant"
-        },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-ExecutionPolicy Bypass",
-                "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Equity_views",
-                ".\\equity_views.ps1"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
         }
     ],
     "variables": {
