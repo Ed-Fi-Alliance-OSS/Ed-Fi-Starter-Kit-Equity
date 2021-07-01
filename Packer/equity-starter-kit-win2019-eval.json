@@ -87,17 +87,28 @@
             "elevated_user": "vagrant",
             "elevated_password": "vagrant"
         },
-        {
-            "debug_mode": "{{ user `debug_mode` }}",
-            "inline": [
-                "Set-Location C:\\temp\\Equity-Starter-Kit",
-                "Copy-Item '.\\Equity Starter Kit.pbix' -Destination 'C:\\Users\\Public\\Desktop\\Equity Starter Kit.pbix'",
-                "Copy-Item '.\\PowerShell\\index.html' -Destination 'C:\\Users\\Public\\Desktop\\index.html'"
-            ],
-            "type": "powershell",
-            "elevated_user": "vagrant",
-            "elevated_password": "vagrant"
-        }
+      {
+        "debug_mode": "{{ user `debug_mode` }}",
+        "inline": [
+          "Set-Location C:\\temp\\Equity-Starter-Kit",
+          "Copy-Item '.\\Equity Starter Kit.pbix' -Destination 'C:\\Users\\Public\\Desktop\\Equity Starter Kit.pbix'",
+          "Copy-Item '.\\PowerShell\\index.html' -Destination 'C:\\Users\\Public\\Desktop\\index.html'"
+        ],
+        "type": "powershell",
+        "elevated_user": "vagrant",
+        "elevated_password": "vagrant"
+      },
+      {
+        "debug_mode": "{{ user `debug_mode` }}",
+        "inline": [
+          "Set-ExecutionPolicy Bypass",
+          "Set-Location C:\\temp\\Equity-Starter-Kit\\PowerShell\\Utils\\Data_inserts",
+          ".\\data_inserts.ps1"
+        ],
+        "type": "powershell",
+        "elevated_user": "vagrant",
+        "elevated_password": "vagrant"
+      }
     ],
     "variables": {
         "vm_name": "equity-starter-kit",
