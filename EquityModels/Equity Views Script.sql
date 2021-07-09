@@ -349,20 +349,11 @@ GO
 CREATE OR ALTER VIEW [BI].[equity.FeederSchool]
 AS
 SELECT
-	FeederSchoolAssociation.SchoolId AS SchoolKey
-	,FeederSchoolAssociation.FeederSchoolId AS FeederSchoolKey
-	,EducationOrganization.NameOfInstitution as FeederSchoolName --This is the field we need for the feeder school filter.
+	SchoolKey
+	,FeederSchoolKey
+	,FeederSchoolName
 FROM
-    edfi.FeederSchoolAssociation
-INNER JOIN
-	edfi.School ON
-		FeederSchoolAssociation.SchoolId = School.SchoolId
-INNER JOIN
-	edfi.School FeederSchool ON
-		FeederSchoolAssociation.FeederSchoolId = FeederSchool.SchoolId
-INNER JOIN
-	edfi.EducationOrganization ON 
-		FeederSchool.SchoolId = EducationOrganization.EducationOrganizationId
+    analytics.equity_FeederSchoolDim
 GO
 
 -- Student Programs
