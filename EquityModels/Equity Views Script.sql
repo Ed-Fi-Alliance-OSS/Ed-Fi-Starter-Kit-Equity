@@ -385,31 +385,11 @@ GO
 CREATE OR ALTER VIEW [BI].[equity.Cohort]
 AS
 SELECT
-	CONCAT(Student.StudentUniqueId, '-', StudentSchoolAssociation.SchoolId) AS StudentSchoolKey
-	,Cohort.CohortDescription --This is the field we need for the filter.
-	,Program.ProgramName
+	StudentSchoolKey
+	,CohortDescription
+	,ProgramName
 FROM
-	edfi.Cohort
-INNER JOIN
-	edfi.CohortProgram ON
-		Cohort.CohortIdentifier = CohortProgram.CohortIdentifier
-		AND Cohort.EducationOrganizationId = CohortProgram.EducationOrganizationId
-INNER JOIN
-	edfi.Program ON
-		CohortProgram.EducationOrganizationId = program.EducationOrganizationId
-		AND CohortProgram.ProgramName = program.ProgramName
-		AND CohortProgram.ProgramTypeDescriptorId = program.ProgramTypeDescriptorId
-INNER JOIN
-    [edfi].[StudentProgramAssociation] StudentProgram ON 
-		StudentProgram.ProgramName = Program.ProgramName
-		AND StudentProgram.ProgramTypeDescriptorId = Program.ProgramTypeDescriptorId
-		AND StudentProgram.ProgramEducationOrganizationId = Program.EducationOrganizationId
-INNER JOIN 
-    edfi.Student ON 
-		StudentProgram.StudentUSI = Student.StudentUSI
-INNER JOIN 
-    edfi.StudentSchoolAssociation ON 
-		Student.StudentUSI = edfi.StudentSchoolAssociation.StudentUSI
+	analytics.equity_StudentProgramCohortDim
 GO
 
 -- Discipline Actions
