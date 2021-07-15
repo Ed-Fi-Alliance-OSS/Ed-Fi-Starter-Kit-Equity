@@ -7675,6 +7675,4 @@ INSERT INTO EdFi_Ods.edfi.FeederSchoolAssociation VALUES ('2010-01-01',19255901,
 INSERT INTO EdFi_Ods.edfi.FeederSchoolAssociation VALUES ('2010-01-01',6000203,255901107,NULL,'Feeder School3',NULL,GETDATE(),GETDATE(),NEWID(),1)
 INSERT INTO EdFi_Ods.edfi.FeederSchoolAssociation VALUES ('2010-01-01',6000203,255901044,NULL,'Feeder School4',NULL,GETDATE(),GETDATE(),NEWID(),1)
 GO
-UPDATE EdFi_Ods.edfi.Grade set GradeTypeDescriptorId = 980
-GO
 
