@@ -421,55 +421,14 @@ GO
 
 CREATE OR ALTER VIEW [BI].[equity.StudentHistory]
 AS
-WITH AttendanceHist
-AS (
-    SELECT StudentKey
-        ,SchoolKey
-        ,COUNT(1) AS DaysEnrolled
-        ,SUM(ReportedAsAbsentFromHomeRoom) AS DaysAbsent
-    FROM analytics.chrab_ChronicAbsenteeismAttendanceFact
-    GROUP BY StudentKey
-        ,SchoolKey
-    )
-    ,GradeList
-AS (
-    SELECT DISTINCT studentSectionDim.StudentKey
-        ,studentSectionDim.SectionKey
-        ,STRING_AGG(studentSectionDim.CourseTitle + ': ' + CAST(gradeFact.NumericGradeEarned AS VARCHAR(100)), ', ' + CHAR(10) + CHAR(13)) AS GradeSummary
-    FROM analytics.ews_StudentSectionGradeFact gradeFact
-    INNER JOIN analytics.StudentSectionDim studentSectionDim ON gradeFact.StudentKey = studentSectionDim.StudentKey
-        AND gradeFact.SectionKey = studentSectionDim.SectionKey
-    GROUP BY studentSectionDim.StudentKey
-        ,studentSectionDim.SectionKey
-        ,gradeFact.GradingPeriodKey
-    )
-SELECT DISTINCT studentSchoolDim.StudentKey
-    ,studentSchoolDim.StudentSchoolKey
-    ,STRING_AGG(gradeFact.GradeSummary, ', ' + CHAR(10) + CHAR(13)) AS GradeSummary
-    ,studentSchoolDim.SchoolKey AS CurrentSchoolKey
-    ,CAST((DaysEnrolled - DaysAbsent) AS DECIMAL) / CAST(DaysEnrolled AS DECIMAL) * 100 AS AttendanceRate
-    --TODO: replace this with new analytics view
-    ,(
-        SELECT COUNT(1)
-        FROM edfi.DisciplineActionStudentDisciplineIncidentAssociation discipline
-        WHERE discipline.StudentUSI = student.StudentUSI
-            AND discipline.SchoolId = studentSchoolDim.SchoolKey
-        ) AS ReferralsAndSuspensions
-    --TODO: replace 1/1/2020 with Withrdaw Date once its added to analytics view
-    ,(SELECT STRING_AGG(SchoolName + ' 1/1/2020', ', ') FROM analytics.StudentSchoolDim ssd INNER JOIN analytics.SchoolDim school ON school.SchoolKey = ssd.SchoolKey
-        WHERE ssd.StudentKey = studentSectionDim.StudentKey) AS EnrollmentHistory
-FROM analytics.StudentSchoolDim studentSchoolDim
-INNER JOIN analytics.StudentSectionDim studentSectionDim ON StudentSectionDim.StudentKey = studentSchoolDim.StudentKey
-INNER JOIN GradeList gradeFact ON gradeFact.StudentKey = studentSectionDim.StudentKey
-    AND gradeFact.SectionKey = studentSectionDim.SectionKey
-INNER JOIN analytics.SchoolDim school ON school.SchoolKey = studentSchoolDim.SchoolKey
-LEFT OUTER JOIN AttendanceHist ah ON ah.StudentKey = studentSectionDim.StudentKey
-INNER JOIN edfi.Student student ON student.StudentUniqueId = studentSchoolDim.StudentKey
-GROUP BY studentSchoolDim.StudentKey
-    ,studentSchoolDim.StudentSchoolKey
-    ,studentSchoolDim.SchoolKey
-    ,DaysEnrolled
-    ,DaysAbsent
-    ,StudentUSI
-    ,studentSectionDim.StudentKey
+SELECT 
+    StudentKey,
+    StudentSchoolKey,
+    GradeSummary,
+    CurrentSchoolKey,
+    AttendanceRate,
+    ReferralsAndSuspensions,
+    EnrollmentHistory
+FROM 
+    analytics.equity_StudentHistoryDim
 
