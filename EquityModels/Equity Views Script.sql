@@ -386,6 +386,8 @@ CREATE OR ALTER VIEW [BI].[equity.Cohort]
 AS
 SELECT
 	StudentSchoolKey
+    ,EntryGradeLevelDescriptor
+	,CohortTypeDescriptor
 	,CohortDescription
 	,ProgramName
 FROM
