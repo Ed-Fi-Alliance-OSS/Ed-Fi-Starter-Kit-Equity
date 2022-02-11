@@ -1,5 +1,8 @@
 # Ed-Fi-Starter-Kit-Equity
 
+## The scripts are for Grandbend Database ODS v5.3
+The scripts for inserting the sample data from the PowerBI file using the ODS 5.3 version are in the PowerBI folder, in the file sample_data.sql.
+
 ## The scripts are for Glendale Database v3.2
 
 ### Steps to load the Glendale Data
