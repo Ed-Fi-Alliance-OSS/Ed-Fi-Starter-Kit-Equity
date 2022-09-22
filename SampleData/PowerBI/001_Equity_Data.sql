@@ -6754,7 +6754,7 @@ INSERT INTO edfi.CohortProgram(CohortIdentifier,EducationOrganizationId,ProgramE
 INSERT INTO edfi.CohortProgram(CohortIdentifier,EducationOrganizationId,ProgramEducationOrganizationId,ProgramName,ProgramTypeDescriptorId,CreateDate) VALUES ('8',255901107,255901,'EQ Program 19',1875,GETDATE())
 INSERT INTO edfi.CohortProgram(CohortIdentifier,EducationOrganizationId,ProgramEducationOrganizationId,ProgramName,ProgramTypeDescriptorId,CreateDate) VALUES ('9',255901107,255901,'EQ Program 20',1834,GETDATE())
 --09-10 StudentCohortAssociation
-INSERT INTO edfi.StudentCohortAssociation(BeginDate,EducationOrganizationId,CohortIdentifier,StudentUSI,CreateDate,LastModifiedDate,Id) VALUES ('01/01/2011',255901001,'1',1881,2,GETDATE(),GETDATE(),'c60ae0a2-e95a-4616-b0e8-b2fc863191e5')
+INSERT INTO edfi.StudentCohortAssociation(BeginDate,EducationOrganizationId,CohortIdentifier,StudentUSI,CreateDate,LastModifiedDate,Id) VALUES ('01/01/2011',255901001,'1',2,GETDATE(),GETDATE(),'c60ae0a2-e95a-4616-b0e8-b2fc863191e5')
 INSERT INTO edfi.StudentCohortAssociation(BeginDate,EducationOrganizationId,CohortIdentifier,StudentUSI,CreateDate,LastModifiedDate,Id) VALUES ('01/01/2011',255901001,'1',4,GETDATE(),GETDATE(),'9769f715-ab8f-4bca-83d5-fdb367f00034')
 INSERT INTO edfi.StudentCohortAssociation(BeginDate,EducationOrganizationId,CohortIdentifier,StudentUSI,CreateDate,LastModifiedDate,Id) VALUES ('01/01/2011',255901001,'1',6,GETDATE(),GETDATE(),'e7847a82-0c39-46c6-bd29-01aeb33dc54e')
 INSERT INTO edfi.StudentCohortAssociation(BeginDate,EducationOrganizationId,CohortIdentifier,StudentUSI,CreateDate,LastModifiedDate,Id) VALUES ('01/01/2011',255901001,'1',12,GETDATE(),GETDATE(),'fa4b31f3-19dc-423c-beae-dbfd5c0decd3')
